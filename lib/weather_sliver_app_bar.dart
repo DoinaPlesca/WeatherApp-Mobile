@@ -16,19 +16,27 @@ class WeatherSliverAppBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       stretch: true,
-      onStretchTrigger: onRefresh, // Call onRefresh when stretch trigger occurs
+      onStretchTrigger: onRefresh,
       backgroundColor: Colors.teal[800],
       expandedHeight: 200.0,
       flexibleSpace: FlexibleSpaceBar(
+        centerTitle: true,
+        titlePadding: EdgeInsets.zero,
         stretchModes: const [
           StretchMode.zoomBackground,
           StretchMode.fadeTitle,
           StretchMode.blurBackground,
         ],
-        title: const Center(
-          child: Text(
+        title: Container(
+          alignment: Alignment.center,
+          child: const Text(
             'Weather',
             textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+            ),
+
           ),
         ),
         background: DecoratedBox(

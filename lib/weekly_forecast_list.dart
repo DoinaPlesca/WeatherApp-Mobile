@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'models.dart';
 
 class WeeklyForecastList extends StatelessWidget {
@@ -28,13 +30,32 @@ class WeeklyForecastList extends StatelessWidget {
     }
   }
 
+  String getWeatherImageUrl(int weatherCode) {
+    switch (WeatherCodeExtension.fromInt(weatherCode)) {
+      case WeatherCode.rainShowersSlight:
+        return 'assets/images/rain.png';
+      case WeatherCode.partlyCloudy:
+        return 'assets/images/cloudy-day.png';
+      case WeatherCode.overcast:
+        return 'assets/images/overcast.png';
+      case WeatherCode.snowFallModerate:
+        return 'assets/images/snow.png';
+      case WeatherCode.rainModerate:
+        return 'assets/images/rain.shower.png';
+      case WeatherCode.rainSlight:
+        return 'assets/images/rain.slight.intensity.png';
+      default:
+        return 'assets/images/default.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           final daily = weeklyForecast.daily!;
           if (daily.time == null ||
               daily.weatherCode == null ||
@@ -48,9 +69,11 @@ class WeeklyForecastList extends StatelessWidget {
           }
 
           final date = DateTime.parse(daily.time![index]);
-          final weatherCode = WeatherCodeExtension.fromInt(daily.weatherCode![index]);
+          final weatherCode =
+              WeatherCodeExtension.fromInt(daily.weatherCode![index]);
           final tempMax = daily.temperature2MMax![index];
           final tempMin = daily.temperature2MMin![index];
+          final weatherImageUrl = getWeatherImageUrl(daily.weatherCode![index]);
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -62,16 +85,9 @@ class WeeklyForecastList extends StatelessWidget {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.grey[800]!, Colors.transparent],
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        weekdayAsString(date),
-                        style: textTheme.headline6,
+                      image: DecorationImage(
+                        image: AssetImage(weatherImageUrl),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -83,20 +99,28 @@ class WeeklyForecastList extends StatelessWidget {
                         children: [
                           Text(
                             weekdayAsString(date),
-                            style: textTheme.headline6,
+                            style: textTheme.headline6!.copyWith(
+                              color: Colors.white, // Change color
+                            ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'Weather: ${weatherCode.description}',
-                            style: textTheme.subtitle1,
+                            weatherCode.description,
+                            style: textTheme.subtitle1!.copyWith(
+                              color: Colors.green, // Change color
+                            ),
                           ),
                           Text(
                             'Max Temp: $tempMax°C',
-                            style: textTheme.bodyText1,
+                            style: textTheme.bodyText1!.copyWith(
+                              color: Colors.red, // Change color
+                            ),
                           ),
                           Text(
                             'Min Temp: $tempMin°C',
-                            style: textTheme.bodyText1,
+                            style: textTheme.bodyText1!.copyWith(
+                              color: Colors.blue, // Change color
+                            ),
                           ),
                         ],
                       ),
