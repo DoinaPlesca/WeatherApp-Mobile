@@ -29,8 +29,9 @@ class WeeklyForecastDto {
       utcOffsetSeconds: json["utc_offset_seconds"] as int?,
       timezone: json['timezone'] as String?,
       timezoneAbbreviation: json['timezone_abbreviation'] as String?,
-      elevation: json['elevation'] as double?,
-      // Change to double
+      elevation: json['elevation'] != null
+          ? json['elevation'].toDouble()
+          : null,
       dailyUnits: json['daily_units'] != null
           ? DailyUnits.fromJson(json['daily_units'])
           : null,
