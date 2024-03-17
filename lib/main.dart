@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weather/real_data_source.dart';
 import 'package:weather/weekly_forecast_screen.dart';
 import 'chart_screen.dart';
 import 'data_source.dart';
@@ -9,7 +10,7 @@ void main() {
     MultiProvider(
       providers: [
         Provider<DataSource>(
-          create: (context) => FakeDataSource(),
+          create: (context) => RealDataSource(),
         ),
       ],
       child: MaterialApp(
@@ -54,13 +55,13 @@ class _MyAppState extends State<MyApp> {
         },
         child: PageView(
           controller: _pageController,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (index) {
             setState(() {
               _currentPageIndex = index;
             });
           },
-          children: [
+          children: const [
             WeeklyForecastScreen(),
             ChartScreen(),
           ],
@@ -73,7 +74,7 @@ class _MyAppState extends State<MyApp> {
     if (_currentPageIndex == 0) {
       _pageController.animateToPage(
         1,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
       );
     }
