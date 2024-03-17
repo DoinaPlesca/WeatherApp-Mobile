@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:weather/time_series.dart';
 import 'data_source.dart';
 import 'models.dart';
 
@@ -11,6 +12,13 @@ class RealDataSource extends DataSource {
     final response = await http.get(Uri.parse(url));
     final map = json.decode(response.body);
     return WeeklyForecastDto.fromJson(map);
+  }
+
+  @override
+  Future<WeatherChartData> getChartData() async {
+    const apiUrl = "REPLACE THIS WITH THE URL YOU COPIED";
+    final response = await http.get(Uri.parse(apiUrl));
+    return WeatherChartData.fromJson(jsonDecode(response.body));
   }
 
 }

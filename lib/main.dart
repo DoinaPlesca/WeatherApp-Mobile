@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather/weekly_forecast_screen.dart';
+import 'chart_screen.dart';
 import 'data_source.dart';
 
 void main() {
@@ -8,50 +9,85 @@ void main() {
     MultiProvider(
       providers: [
         Provider<DataSource>(
-          create: (context) => FakeDataSource()),
-        ],
-      child: const WeatherApp(),
+          create: (context) => FakeDataSource(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(),
+        home: MyApp(),
+      ),
     ),
   );
 }
 
-class WeatherApp extends StatelessWidget {
-  const WeatherApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late PageController _pageController;
+  int _currentPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentPageIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      scrollBehavior: const ConstantScrollBehavior(),
-      title: 'Horizons Weather',
-      home: const WeeklyForecastScreen(),
+    return Scaffold(
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          // Detect swipe to the right
+          if (details.primaryVelocity! > 0) {
+            navigateToChartScreen();
+          }
+          // Detect swipe to the left
+          else if (details.primaryVelocity! < 0) {
+            navigateBack();
+          }
+        },
+        child: PageView(
+          controller: _pageController,
+          physics: NeverScrollableScrollPhysics(),
+          onPageChanged: (index) {
+            setState(() {
+              _currentPageIndex = index;
+            });
+          },
+          children: [
+            WeeklyForecastScreen(),
+            ChartScreen(),
+          ],
+        ),
+      ),
     );
   }
-}
 
+  void navigateToChartScreen() {
+    if (_currentPageIndex == 0) {
+      _pageController.animateToPage(
+        1,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    }
+  }
 
-
-
-class ConstantScrollBehavior extends ScrollBehavior {
-  const ConstantScrollBehavior();
-
-  @override
-  Widget buildScrollbar(
-      BuildContext context, Widget child, ScrollableDetails details) =>
-      child;
-
-  @override
-  Widget buildOverscrollIndicator(
-      BuildContext context, Widget child, ScrollableDetails details) =>
-      child;
-
-  @override
-  TargetPlatform getPlatform(BuildContext context) => TargetPlatform.macOS;
-
-  @override
-  ScrollPhysics getScrollPhysics(BuildContext context) =>
-      const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
+  void navigateBack() {
+    if (_currentPageIndex == 1) {
+      _pageController.animateToPage(
+        0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    }
+  }
 }
 
 
